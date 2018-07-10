@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include "initBlocks_disk.h"
 #include "loadFromDisk.h"
+//extern struct ext2_super_block superBlock_memory;
 int main(int argc, const char * argv[]) {
     /*初始化模拟硬盘文件*/
     initBlocks();

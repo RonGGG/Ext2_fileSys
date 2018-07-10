@@ -7,6 +7,8 @@
 //
 
 #include "loadFromDisk.h"
+//定义全局superBlock结构体(内存中形式)
+struct ext2_super_block superBlock_memory;
 /*
  从硬盘中引导文件系统
  （模拟BOOT的过程）
@@ -20,5 +22,4 @@ void loadFileSysFromDisk(void){
      5.加载其他（根目录文件结构等）
      */
     //1.加载superblock
-    
 }

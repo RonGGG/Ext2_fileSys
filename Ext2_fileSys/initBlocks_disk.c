@@ -33,8 +33,6 @@ void initBlocks(void){
     //并调用：No.3 写入inode表函数
     setOriginalData(file);
     
-//    fseek(file, 0, SEEK_END);
-//    printf("length :%ld\n",ftell(file));
     //关闭文件流：
     fclose(file);
 }
@@ -96,7 +94,6 @@ void setMyBlockBit(FILE * file){
     buff[0] = 0xff;
     buff[1] = 0xff;
     buff[2] = 0xe0;
-    
     buff[35/8] = 0x1c;   //35-37 位需要置1，因为需要3块block
     if (fwrite(&buff, BLOCK_SIZE, 1, file)<=0) {
         printf("fwrite异常！\n");
@@ -135,7 +132,6 @@ void setMyInodeTable(FILE * file,int num[]){
     }
     //置空该区域
     char buff[BLOCK_SIZE*16];
-//    buff[BLOCK_SIZE*16-1] = 'E';
     memset(buff, 0, sizeof(buff));
     /*需要初始化三个inode*/
     //1.root目录文件
@@ -150,11 +146,10 @@ void setMyInodeTable(FILE * file,int num[]){
     inode.i_mtime = (uint32_t)time.tv_sec;
     inode.i_dtime = 0;   //文件删除时间，这个暂时不赋值
     inode.i_gid = 1;   //用户组标识，暂时填用户标识
-    inode.i_links_count = 2;   //硬连接数，目录文件 >2
-    inode.i_blocks = 2;   //文件所占block数量
+    inode.i_links_count = 3;   //硬连接数，目录文件 >2
+    inode.i_blocks = 1;   //文件所占block数量
     inode.i_flags = 0;   //暂时不赋值
     inode.i_block[0] = 35;   //root块号暂定为35，即非保留区的第1个数据块
-    inode.i_block[1] = 36;
     char buff_inode[128] = "";
     memcpy(buff_inode, &inode, sizeof(inode));
     memcpy(buff, buff_inode, 128);
@@ -172,7 +167,7 @@ void setMyInodeTable(FILE * file,int num[]){
     inode1.i_links_count = 2;   //硬连接数，目录文件 >2
     inode1.i_blocks = 1;   //文件所占block数量
     inode1.i_flags = 0;   //暂时不赋值
-    inode1.i_block[0] = 37;   //bin块号暂定为36，即非保留区的第2个数据块
+    inode1.i_block[0] = 36;   //bin块号暂定为36，即非保留区的第2个数据块
     char buff_inode1[128] = "";
     memcpy(buff_inode1, &inode1, sizeof(inode1));
     memcpy(buff+128, buff_inode1, 128);
@@ -186,10 +181,10 @@ void setMyInodeTable(FILE * file,int num[]){
     inode2.i_mtime = (uint32_t)time.tv_sec;
     inode2.i_dtime = 0;   //文件删除时间，这个暂时不赋值
     inode2.i_gid = 1;   //用户组标识，暂时填用户标识
-    inode2.i_links_count = 2;   //硬连接数，目录文件 >2
+    inode2.i_links_count = 1;   //硬连接数，目录文件 >2
     inode2.i_blocks = 1;   //文件所占block数量
     inode2.i_flags = 0;   //暂时不赋值
-    inode2.i_block[0] = 38;   //bin块号暂定为37，即非保留区的第3个数据块
+    inode2.i_block[0] = 37;   //bin块号暂定为37，即非保留区的第3个数据块
     char buff_inode2[128] = "";
     memcpy(buff_inode2, &inode2, sizeof(inode2));
     memcpy(buff+256, buff_inode2, 128);
@@ -203,24 +198,14 @@ void setMyInodeTable(FILE * file,int num[]){
  设置初始数据函数（root文件，bin文件，hello.c文件）
  */
 void setOriginalData(FILE * file){
-//    printf("%ld\n",ftell(file));
     if (ftell(file)!=BLOCK_SIZE*35) {
         fseek(file, 35*BLOCK_SIZE, SEEK_SET);//移动指针到35k处，写入数据
     }
-    //1.root目录数据结构
-//    struct ext2_dir_entry_2 dentry_root;
-//    dentry_root.inode = 1;   //inode号
-//    char name[255] = "root";
-//    memcpy(dentry_root.name, name, 255);   //文件名字
-//    dentry_root.name_len = 4;   //文件名字长度
-//    dentry_root.file_type = (uint8_t)Contents_File;   //文件类型
-//    dentry_root.rec_len = 4;   //目录数
-    
     /*
      root文件内容设置
      */
     char buff[BLOCK_SIZE*3];  //root目录文件总大小 1K
-    //1.写入"." ".."目录项
+    //1.写入"."
     struct ext2_dir_entry_2 dentry_this;
     dentry_this.inode = 1;   //inode号 root文件inode 即自己
     char this[247] = ".";
@@ -229,7 +214,7 @@ void setOriginalData(FILE * file){
     dentry_this.file_type = (uint8_t)Contents_File;   //文件类型
     dentry_this.rec_len = 4;   //目录数 因为指向自己
     memcpy(buff, &dentry_this, DIR_ENTRY_SIZE);//写入buff
-    
+    //".."目录项
     struct ext2_dir_entry_2 dentry_father;
     dentry_father.inode = 1;   //inode号 root文件inode 即自己
     char father[247] = "..";
@@ -238,7 +223,6 @@ void setOriginalData(FILE * file){
     dentry_father.file_type = (uint8_t)Contents_File;   //文件类型
     dentry_father.rec_len = 4;   //目录数 因为是根目录，也指向自己
     memcpy(buff+DIR_ENTRY_SIZE, &dentry_father, DIR_ENTRY_SIZE);//写入buff
-    
     //2.写入bin目录项
     struct ext2_dir_entry_2 dentry_bin;
     dentry_bin.inode = 2;   //inode号
@@ -248,7 +232,6 @@ void setOriginalData(FILE * file){
     dentry_bin.file_type = (uint8_t)Contents_File;   //文件类型
     dentry_bin.rec_len = 2;   //目录数
     memcpy(buff+DIR_ENTRY_SIZE*2, &dentry_bin, DIR_ENTRY_SIZE);//写入buff
-    
     //3.hello文件目录项
     struct ext2_dir_entry_2 dentry_hello;
     dentry_hello.inode = 3;   //inode号
@@ -263,7 +246,7 @@ void setOriginalData(FILE * file){
      bin 内容设置
      */
     char buff_bin[BLOCK_SIZE];
-    //1.写入"." ".."目录项
+    //1.写入"."
     struct ext2_dir_entry_2 dentry_bin_this;
     dentry_bin_this.inode = 2;   //inode号
     char bin_this[247] = ".";
@@ -272,7 +255,7 @@ void setOriginalData(FILE * file){
     dentry_bin_this.file_type = (uint8_t)Contents_File;   //文件类型
     dentry_bin_this.rec_len = 2;   //目录数 因为指向自己
     memcpy(buff_bin, &dentry_bin_this, DIR_ENTRY_SIZE);//写入buff_bin
-    
+    //".."目录项
     struct ext2_dir_entry_2 dentry_bin_father;
     dentry_bin_father.inode = 1;   //inode号
     char bin_father[247] = "..";
@@ -283,12 +266,13 @@ void setOriginalData(FILE * file){
     memcpy(buff_bin+DIR_ENTRY_SIZE, &dentry_bin_father, DIR_ENTRY_SIZE);//写入buff_bin
     
     memcpy(buff+BLOCK_SIZE, buff_bin, BLOCK_SIZE);//buff_bin写入buff
+    
     /*
      hello.c 内容设置
      */
     char buff_hello[BLOCK_SIZE];
     char helloFile[512] = "hello,world!";
-    helloFile[511] = 'H';   //用来debug
+    buff_hello[BLOCK_SIZE-1] = 'H';   //用来debug
     memcpy(buff_hello, helloFile, 512);
     memcpy(buff+BLOCK_SIZE*2, buff_hello, BLOCK_SIZE);//buff_hello写入buff
     
