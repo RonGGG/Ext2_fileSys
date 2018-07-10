@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		A7BAFB0220F358B1007D6491 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = A7BAFB0120F358B1007D6491 /* main.c */; };
+		A7BAFB0B20F3609F007D6491 /* initBlocks_disk.c in Sources */ = {isa = PBXBuildFile; fileRef = A7BAFB0A20F3609F007D6491 /* initBlocks_disk.c */; };
+		A7BAFB0E20F43849007D6491 /* loadFromDisk.c in Sources */ = {isa = PBXBuildFile; fileRef = A7BAFB0D20F43849007D6491 /* loadFromDisk.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +27,11 @@
 /* Begin PBXFileReference section */
 		A7BAFAFE20F358B1007D6491 /* Ext2_fileSys */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Ext2_fileSys; sourceTree = BUILT_PRODUCTS_DIR; };
 		A7BAFB0120F358B1007D6491 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		A7BAFB0820F3592A007D6491 /* structs_def_file.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = structs_def_file.h; sourceTree = "<group>"; };
+		A7BAFB0920F3609F007D6491 /* initBlocks_disk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = initBlocks_disk.h; sourceTree = "<group>"; };
+		A7BAFB0A20F3609F007D6491 /* initBlocks_disk.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = initBlocks_disk.c; sourceTree = "<group>"; };
+		A7BAFB0C20F43849007D6491 /* loadFromDisk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = loadFromDisk.h; sourceTree = "<group>"; };
+		A7BAFB0D20F43849007D6491 /* loadFromDisk.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = loadFromDisk.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,7 +64,12 @@
 		A7BAFB0020F358B1007D6491 /* Ext2_fileSys */ = {
 			isa = PBXGroup;
 			children = (
+				A7BAFB0820F3592A007D6491 /* structs_def_file.h */,
 				A7BAFB0120F358B1007D6491 /* main.c */,
+				A7BAFB0920F3609F007D6491 /* initBlocks_disk.h */,
+				A7BAFB0A20F3609F007D6491 /* initBlocks_disk.c */,
+				A7BAFB0C20F43849007D6491 /* loadFromDisk.h */,
+				A7BAFB0D20F43849007D6491 /* loadFromDisk.c */,
 			);
 			path = Ext2_fileSys;
 			sourceTree = "<group>";
@@ -118,6 +130,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A7BAFB0B20F3609F007D6491 /* initBlocks_disk.c in Sources */,
+				A7BAFB0E20F43849007D6491 /* loadFromDisk.c in Sources */,
 				A7BAFB0220F358B1007D6491 /* main.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
