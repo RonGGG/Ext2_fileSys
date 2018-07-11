@@ -68,13 +68,13 @@ void setMySuperblock(FILE * file){
      通过char来转换成buf缓冲，并在结尾填个Q来验证（记得把Q删掉）
      这样做的目的是可以让superblock占用一整个块，虽然后面会有空白
      */
-    char buf[BLOCK_SIZE] = "";
+    char buf[SUPER_STRUCT_SIZE] = "";
     memcpy(buf, &superBlock, sizeof(superBlock));
     //写superblock到模拟硬盘文件中
     if (ftell(file)!=0) {
         rewind(file);//这里保证每次superblock都在开头
     }
-    if (fwrite(&buf, BLOCK_SIZE, 1, file)<=0) {
+    if (fwrite(&buf, BLOCK_SIZE, 1, file)==-1) {
         printf("fwrite异常！\n");
     }
     printf("superblock硬盘中初始化成功\n");
@@ -95,7 +95,7 @@ void setMyBlockBit(FILE * file){
     buff[1] = 0xff;
     buff[2] = 0xe0;
     buff[35/8] = 0x1c;   //35-37 位需要置1，因为需要3块block
-    if (fwrite(&buff, BLOCK_SIZE, 1, file)<=0) {
+    if (fwrite(&buff, BLOCK_SIZE, 1, file)==-1) {
         printf("fwrite异常！\n");
     }
     printf("blockBit硬盘中初始化成功\n");
@@ -115,7 +115,7 @@ void setMyInodeBit(FILE * file){
     //设置 前3个已使用
     buff[0] = 0xe0;
     //写入
-    if (fwrite(&buff, BLOCK_SIZE, 1, file)<=0) {
+    if (fwrite(&buff, BLOCK_SIZE, 1, file)==-1) {
         printf("fwrite异常！\n");
     }
     printf("inodeBit硬盘中初始化成功\n");
@@ -150,9 +150,9 @@ void setMyInodeTable(FILE * file,int num[]){
     inode.i_blocks = 1;   //文件所占block数量
     inode.i_flags = 0;   //暂时不赋值
     inode.i_block[0] = 35;   //root块号暂定为35，即非保留区的第1个数据块
-    char buff_inode[128] = "";
-    memcpy(buff_inode, &inode, sizeof(inode));
-    memcpy(buff, buff_inode, 128);
+//    char buff_inode[128] = "";
+//    memcpy(buff_inode, &inode, sizeof(inode));
+    memcpy(buff, &inode, 128);
     
     //2.bin目录文件
     struct ext2_inode inode1;
@@ -168,9 +168,9 @@ void setMyInodeTable(FILE * file,int num[]){
     inode1.i_blocks = 1;   //文件所占block数量
     inode1.i_flags = 0;   //暂时不赋值
     inode1.i_block[0] = 36;   //bin块号暂定为36，即非保留区的第2个数据块
-    char buff_inode1[128] = "";
-    memcpy(buff_inode1, &inode1, sizeof(inode1));
-    memcpy(buff+128, buff_inode1, 128);
+//    char buff_inode1[128] = "";
+//    memcpy(buff_inode1, &inode1, sizeof(inode1));
+    memcpy(buff+128, &inode1, 128);
     //3.hello.c 普通文件
     struct ext2_inode inode2;
     inode2.i_mode = Ordinary_File << 12;  //高4位表示文件类型，所以左移12位
@@ -185,11 +185,11 @@ void setMyInodeTable(FILE * file,int num[]){
     inode2.i_blocks = 1;   //文件所占block数量
     inode2.i_flags = 0;   //暂时不赋值
     inode2.i_block[0] = 37;   //bin块号暂定为37，即非保留区的第3个数据块
-    char buff_inode2[128] = "";
-    memcpy(buff_inode2, &inode2, sizeof(inode2));
-    memcpy(buff+256, buff_inode2, 128);
+//    char buff_inode2[128] = "";
+//    memcpy(buff_inode2, &inode2, sizeof(inode2));
+    memcpy(buff+256, &inode2, 128);
     
-    if (fwrite(&buff, BLOCK_SIZE*16, 1, file)<=0) {
+    if (fwrite(&buff, BLOCK_SIZE*16, 1, file)==-1) {
         printf("fwrite异常！\n");
     }
     printf("inodeTable区域硬盘中初始化成功\n");
@@ -277,7 +277,7 @@ void setOriginalData(FILE * file){
     memcpy(buff+BLOCK_SIZE*2, buff_hello, BLOCK_SIZE);//buff_hello写入buff
     
     //4.写入硬盘数据区
-    if (fwrite(&buff, BLOCK_SIZE*3, 1, file)<=0) {
+    if (fwrite(&buff, BLOCK_SIZE*3, 1, file)==-1) {
         printf("fwrite异常！\n");
     }
     
