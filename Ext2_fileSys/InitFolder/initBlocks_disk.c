@@ -8,6 +8,8 @@
 
 #include "initBlocks_disk.h"
 #include <sys/time.h>
+#include <string.h>
+#include "structs_def_file.h"
 void initBlocks(void){
     /*
      文件流写操作

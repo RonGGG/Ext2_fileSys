@@ -7,6 +7,8 @@
 //
 
 #include "loadFromDisk.h"
+#include <stdlib.h>
+#include "structs_def_file.h"
 /*结构体列表*/
 struct ext2_super_block_memory superBlock_memory;/*定义全局superBlock结构体(内存中)*/
 struct ext2_inode_memory inodesTable_memory[128];/*定义全局inodeTable(内存中)*/
@@ -84,7 +86,7 @@ void loadInodeTable(FILE * file){
         if (fread(&inode_tmp, inodeSize, 1, file)<1) {
             printf("fread error\n");
         }
-        inode_tmp.i_number = p_inodeTable;   /*inode在inodeTable中的下标*/
+        inode_tmp.i_number = i+1;   /*inode号*/
         inode_tmp.i_count = 0;   /*访问此节点的进程数，暂时为0*/
         inode_tmp.i_flag = 0;   /*标志位，暂时用于互斥锁 0：即可以访问 1:不能访问*/
         inode_tmp.i_dev = superBlock_memory.dev_num;   /*设备*/

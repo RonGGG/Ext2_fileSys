@@ -10,8 +10,7 @@
 #define initBlocks_disk_h
 
 #include <stdio.h>
-#include <string.h>
-#include "structs_def_file.h"
+
 void initBlocks(void);//初始化各个block
 void setMySuperblock(FILE * file);//初始化superBlock和调用初始化root目录函数
 void setMyBlockBit(FILE * file);//初始化block位图

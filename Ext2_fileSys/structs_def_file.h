@@ -22,7 +22,7 @@ enum FileType{
     Symbol_File = 5,   //符号连接
     FIFO_File = 6   //FIFO/管道文件
 };
-//超级块数据结构（硬盘上）
+/*超级块数据结构（硬盘上）*/
 #define SUPER_STRUCT_SIZE 1024
 struct ext2_super_block
 {
@@ -72,7 +72,7 @@ struct ext2_super_block
     
     uint32_t   s_reserved[204+8];  /* 用null填充块的末尾 */
 };
-//superblock（内存上）
+/*superblock（内存上）*/
 struct ext2_super_block_memory
 {
     uint32_t    s_inodes_count;    /* 文件系统中索引节点总数 */
@@ -113,7 +113,7 @@ struct ext2_super_block_memory
 };
 #define Ext2_N_BLOCKS 9
 #define INODE_STRUCT_SIZE 128
-//inode数据结构：(硬盘上)
+/*inode数据结构：(硬盘上)*/
 struct ext2_inode {
     uint16_t    i_mode; /* 文件类型和访问权限 */
     uint16_t    i_uid;    /* 文件拥有者标识号*/
@@ -131,7 +131,7 @@ struct ext2_inode {
     /*填充部分*/
     uint32_t i_reserved[14];   /*因为差56B就128B了*/
 };
-//inode数据结构：（内存中）
+/*inode数据结构：（内存中）*/
 struct ext2_inode_memory {
     uint16_t    i_mode; /* 文件类型和访问权限 */
     uint16_t    i_uid;    /* 文件拥有者标识号*/
@@ -147,17 +147,17 @@ struct ext2_inode_memory {
     uint32_t    i_flags; /* 打开文件的方式 */
     uint32_t    i_block[Ext2_N_BLOCKS];  /* 指向数据块的指针数组 */
     /*填充部分*/
-    uint32_t i_reserved[11];   /*因为差56B就128B了*/
+    uint32_t i_reserved[9];   /*因为差56B就128B了*/
     /*以下数据在硬盘中没有，仅在内存中存在*/
     uint32_t i_number;   /*内存索引节点编号，作为内存索引节点标识符(定义为数组下标)*/
     uint32_t i_count;   /*记录当前有几个进程正在访问此i结点，每当有进程访问此i结点时，对i_count+1，退出-1*/
     uint16_t i_flag;   /*内存索引结点是否已上锁、是否有进程等待此i结点解锁、i结点是否被修改、是否有最近被访问等标志*/
     uint16_t i_dev;   /*设备号*/
     //因为使用数组，因此就不写前后指针了
-//    uint32_t i_forw;   /*Hash前向指针*/
-//    uint32_t i_back;   /*Hash后向指针*/
+    uint32_t i_forw;   /*Hash前向指针*/
+    uint32_t i_back;   /*Hash后向指针*/
 };
-//目录项数据结构：
+/*目录项数据结构：*/
 #define DIR_ENTRY_SIZE 256
 #define DIR_NAME_SIZE 247
 struct ext2_dir_entry_2 {
@@ -167,5 +167,43 @@ struct ext2_dir_entry_2 {
     uint8_t file_type; // 文件类型
     char name[DIR_NAME_SIZE]; // 文件名
 };
-
+/*用户结构体*/
+#define USER_STRUCT_SIZE
+struct User{
+    uint32_t uid;
+    uint16_t priority;
+    uint16_t name_len;
+    char name[120];
+};
+/*
+ fs_struct记录跟目录inode地址和当前目录inode地址
+ */
+struct fs_struct{
+    int count;    /* 共享此结构的计数值 */
+    uint16_t umask;  /* 文件掩码 */
+    struct ext2_inode_memory * root, * pwd;  /* 根目录和当前目录inode指针 */
+};
+/*
+ file系统打开文件结构体
+ */
+struct file{
+    
+};
+/*
+ files_struct 用户打开文件结构体
+ */
+#define NR_OPEN
+struct files_struct{
+    int count;    /* 共享该结构的计数值 */
+    fd_set close_on_exec;
+    fd_set open_fds;
+    struct file * fd[NR_OPEN];
+};
+/*任务结构体*/
+struct task_struct{
+    pid_t pid;   /*进程标识符*/
+    struct fs_struct * fs;   /*fs_struct*/
+    struct files_struct * files;   /*files_struct*/
+    struct User * owner;   /*标示该进程属于哪个用户*/
+};
 #endif /* structs_def_file_h */

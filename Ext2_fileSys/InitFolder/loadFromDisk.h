@@ -10,8 +10,8 @@
 #define loadFromDisk_h
 
 #include <stdio.h>
-#include <stdlib.h>
-#include "structs_def_file.h"
+
+
 #define INODE_TABLE_MAX 128  //内存中inodeTable数组限长
 void loadFileSysFromDisk(void);/*加载硬盘中数据*/
 #endif /* loadFromDisk_h */
