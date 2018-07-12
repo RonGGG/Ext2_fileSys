@@ -40,17 +40,24 @@ void apply_free_inode(uint32_t * inodeNum);
 
 
 /*
- 修改inode位图
+ 修改inode位图(内存中)
  参数：（inode号，修改为0/1）
  */
 void setImap(uint32_t inode,uint8_t set_num);
 
 
 /*
- 解析路径
+ 修改block位图(内存中)
+ 参数：（block号，修改为0/1）
+ */
+void setZmap(uint32_t block,uint8_t set_num);
+
+
+/*
+ 解析路径（得到顶层目录项目）
  参数：(char * 路径,struct ext2_inode_memory ** inode指针地址(因为是指针赋值))
  */
-void analyse_pathTo_inode(char * path,struct ext2_inode_memory ** inode);
+void analyse_pathTo_inode(char * path,struct ext2_inode_memory ** inode,char * ret_name);
 
 /*
  通过inode号找内存inode节点(没有就返回NULL)
@@ -64,5 +71,20 @@ void find_inode(uint32_t inodeNum,struct ext2_inode_memory ** inode);
  参数：（char * name,struct ext2_inode_memory * inode，int * ret_inode_num）
  */
 void get_inodeNum_from_content(char * name , struct ext2_inode_memory * inode,uint32_t * ret_inode_num);
+
+
+/*
+ 初始化新的目录文件
+ 因为要写入两个指针目录项，所以用函数来生成
+ 参数：（buff是缓存，fatherNum是父目录项目数，inodeNums数组0处是自己的inode号1处是父节点inode号）
+ */
+void setEmpty_contentFile(char * buff,uint32_t fatherItemsNum,uint32_t inodeNums[]);
+
+
+/*
+ 初始化新的inode结构体
+ 参数是基本值的设定
+ */
+void setEmpty_inode_struct(struct ext2_inode * inode,uint16_t imode,struct User * user,uint32_t time,uint32_t blockNum);
 
 #endif /* inode_operates_h */

@@ -115,9 +115,8 @@ struct ext2_super_block_memory
 #define INODE_STRUCT_SIZE 128
 /*inode数据结构：(硬盘上)*/
 struct ext2_inode {
-    uint16_t    i_mode; /* 文件类型和访问权限 */
+    uint16_t    i_mode; /* 文件类型和访问权限 高4位表示类型，低12位表示权限：0，1，2，3级别*/
     uint16_t    i_uid;    /* 文件拥有者标识号*/
-    
     uint32_t    i_size; /* 以字节计的文件大小 */
     uint32_t    i_atime; /* 文件的最后一次访问时间 */
     uint32_t    i_ctime; /* 该节点最后被修改时间 */
@@ -168,12 +167,12 @@ struct ext2_dir_entry_2 {
     char name[DIR_NAME_SIZE]; // 文件名
 };
 /*用户结构体*/
-#define USER_STRUCT_SIZE
 struct User{
     uint32_t uid;
     uint16_t priority;
     uint16_t name_len;
     char name[120];
+    struct ext2_inode_memory * user_content;
 };
 /*
  fs_struct记录跟目录inode地址和当前目录inode地址
@@ -186,24 +185,36 @@ struct fs_struct{
 /*
  file系统打开文件结构体
  */
+#define NR_FILE_TABLE 128
 struct file{
-    
+    uint16_t f_mode;  /* 文件的打开模式 */
+    uint16_t f_flags; /* 文件操作标志 */
+    uint16_t f_count; /* 共享该结构体的计数值 */
+    uint16_t f_pos;  /* 文件的当前读写位置 以字节记 */
+    struct ext2_inode_memory * f_inode;  /* 指向文件对应的inode(内存中) */
 };
 /*
  files_struct 用户打开文件结构体
  */
-#define NR_OPEN
+#define NR_OPEN 10
 struct files_struct{
     int count;    /* 共享该结构的计数值 */
-    fd_set close_on_exec;
-    fd_set open_fds;
-    struct file * fd[NR_OPEN];
+//    fd_set close_on_exec;//没用
+//    fd_set open_fds;//没用
+    int used;/*永远指向最后一个已使用的描述符后,如果used之前的描述符被关闭，则务必设置NULL*/
+    struct file * fd[NR_OPEN];//文件描述符表
 };
-/*任务结构体*/
+/*
+ 任务结构体
+ */
 struct task_struct{
     pid_t pid;   /*进程标识符*/
     struct fs_struct * fs;   /*fs_struct*/
     struct files_struct * files;   /*files_struct*/
     struct User * owner;   /*标示该进程属于哪个用户*/
 };
+/*操作权限常量*/
+#define READ_AND_WRITE 0
+#define READ 1
+#define DISS_OP 2
 #endif /* structs_def_file_h */

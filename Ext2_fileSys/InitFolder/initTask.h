@@ -10,7 +10,8 @@
 #define initTask_h
 
 #include <stdio.h>
-void initTask(void);/*进程以及进程中的数据结构初始化*/
+#include "structs_def_file.h"
+void initTask(struct ext2_inode_memory * inode);/*进程以及进程中的数据结构初始化*/
 
 void initFs(void);
 #endif /* initTask_h */

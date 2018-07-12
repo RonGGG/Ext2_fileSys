@@ -14,6 +14,8 @@
 #include "structs_def_file.h"
 #include "checkInput.h"
 
+#include "inode_operates.h"
+#include <string.h>
 /*全局可引用表
  struct ext2_super_block_memory superBlock_memory;    //定义全局superBlock结构体(内存中)
  struct ext2_inode_memory inodesTable_memory[128];     //定义全局inodeTable(内存中)
@@ -26,9 +28,20 @@
  
  struct task_struct * currentTask;       //当前进程
  struct task_struct * taskList[TASK_NUM_MAX];        //进程就绪队列
+ 
+ struct file * file_table[NR_FILE_TABLE];//系统打开文件数组
  */
+/*定义变量*/
+char currentPwd[256];
+/*引用变量*/
 extern struct ext2_super_block_memory superBlock_memory;
 extern struct User * currentUser;
+extern struct User * userList[];/*用户列表,暂定最大10个用户*/
+extern struct task_struct * currentTask;
+/*函数*/
+/*getchar的封装，可以接受空格，回车结束*/
+void get_str(char * buff);
+
 int main(int argc, const char * argv[]) {
     /*初始化模拟硬盘文件*/
     initBlocks();
@@ -36,8 +49,13 @@ int main(int argc, const char * argv[]) {
     loadFileSysFromDisk();
     /*初始化用户*/
     initUser();//此处默认以Ron(普通用户)的身份登录
-    /*初始化进程*/
-    initTask();
+    //创建用户目录：
+    struct ext2_inode_memory inode;//inode即当前用户目录 /root/Ron/
+    gzr_creat("/", "Ron", 3, Contents_File<<12, &inode);
+    currentUser->user_content = &inode;//设定Ron用户目录
+    find_inode(1, &userList[1]->user_content);
+    /*初始化终端进程*/
+    initTask(&inode);
     /*打印展示界面*/
     printf("==========================\n");
     printf("Block counts:%d\n",superBlock_memory.s_blocks_count);
@@ -48,11 +66,27 @@ int main(int argc, const char * argv[]) {
     printf("Total size:%d B\n",superBlock_memory.s_blocks_count*superBlock_memory.s_log_block_size);
     printf("==========================\n");
     
+    char inputBuff[1024];   //用于接受用户输入
     while (1) {
-        char inputBuff[1024];   //用于接受用户输入
-        printf("Mymac: %s$ ",currentUser->name);
-        scanf("%s",inputBuff);
+        if (currentPwd[0]=='\0') {
+            printf("Mymac:~ %s$ ",currentUser->name);
+        }else{
+            printf("Mymac:%s %s$ ",currentPwd,currentUser->name);
+        }
+        memset(inputBuff, '\0', 1024);
+        /*这里不能用scanf，因为空格不能被接受，所以重写函数封装getchar()*/
+//        scanf("%s",inputBuff);
+        get_str(inputBuff);
         checkInput(inputBuff);
     }
     return 0;
+}
+/*getchar的封装，可以接受空格，回车结束*/
+void get_str(char * buff){
+    char ch;
+    int i=0;
+    while ((ch = getchar())!=10) {
+        buff[i] = ch;
+        i+=1;
+    }
 }

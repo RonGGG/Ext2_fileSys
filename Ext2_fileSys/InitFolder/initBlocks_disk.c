@@ -95,8 +95,9 @@ void setMyBlockBit(FILE * file){
     //设置前19位为1
     buff[0] = 0xff;
     buff[1] = 0xff;
-    buff[2] = 0xe0;
-    buff[35/8] = 0x1c;   //35-37 位需要置1，因为需要3块block
+    buff[2] = 0xff;
+    buff[3] = 0xff;
+    buff[35/8] = 0xfc;   //35-37 位需要置1，因为需要3块block
     if (fwrite(&buff, BLOCK_SIZE, 1, file)==-1) {
         printf("fwrite异常！\n");
     }
@@ -129,8 +130,8 @@ void setMyInodeBit(FILE * file){
  */
 void setMyInodeTable(FILE * file,int num[]){
     printf("初始化inodeTable区域:\n");
-    if (ftell(file)!=BLOCK_SIZE*3) {
-        fseek(file, 3*BLOCK_SIZE, SEEK_SET);//移动指针到3k处，写入数据
+    if (ftell(file)!=BLOCK_SIZE*3+INODE_STRUCT_SIZE) {
+        fseek(file, 3*BLOCK_SIZE+INODE_STRUCT_SIZE, SEEK_SET);//移动指针到3k+128处，写入数据
     }
     //置空该区域
     char buff[BLOCK_SIZE*16];
@@ -140,8 +141,8 @@ void setMyInodeTable(FILE * file,int num[]){
     struct timeval time;
     gettimeofday(&time, 0);
     struct ext2_inode inode;
-    inode.i_mode = Contents_File << 12;  //高4位表示文件类型，所以左移12位
-    inode.i_uid = 1;   //类型1表示普通用户拥有
+    inode.i_mode = (Contents_File << 12)+1;  //高4位表示文件类型，所以左移12位,级别1
+    inode.i_uid = 110;   //表示超级用户拥有
     inode.i_size = num[0];   //注意：以字节记！！！！
     inode.i_atime = (uint32_t)time.tv_sec;   //以下这三个时间都暂时默认为现在
     inode.i_ctime = (uint32_t)time.tv_sec;
@@ -158,8 +159,8 @@ void setMyInodeTable(FILE * file,int num[]){
     
     //2.bin目录文件
     struct ext2_inode inode1;
-    inode1.i_mode = Contents_File << 12;  //高4位表示文件类型，所以左移12位
-    inode1.i_uid = 1;   //类型1表示普通用户拥有
+    inode1.i_mode = (Contents_File << 12)+1;  //高4位表示文件类型，所以左移12位，级别1
+    inode1.i_uid = 110;   //表示超级用户拥有
     inode1.i_size = num[1];   //注意：以字节记！！！！
     inode1.i_atime = (uint32_t)time.tv_sec;   //以下这三个时间都暂时默认为现在
     inode1.i_ctime = (uint32_t)time.tv_sec;
@@ -175,8 +176,8 @@ void setMyInodeTable(FILE * file,int num[]){
     memcpy(buff+128, &inode1, 128);
     //3.hello.c 普通文件
     struct ext2_inode inode2;
-    inode2.i_mode = Ordinary_File << 12;  //高4位表示文件类型，所以左移12位
-    inode2.i_uid = 1;   //类型1表示普通用户拥有
+    inode2.i_mode = (Ordinary_File << 12)+3;  //高4位表示文件类型，所以左移12位,级别3
+    inode2.i_uid = 123;   //表示普通用户拥有
     inode2.i_size = num[2];   //注意：以字节记！！！！
     inode2.i_atime = (uint32_t)time.tv_sec;   //以下这三个时间都暂时默认为现在
     inode2.i_ctime = (uint32_t)time.tv_sec;

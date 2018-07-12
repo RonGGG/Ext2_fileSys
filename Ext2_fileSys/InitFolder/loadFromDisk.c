@@ -12,7 +12,7 @@
 /*结构体列表*/
 struct ext2_super_block_memory superBlock_memory;/*定义全局superBlock结构体(内存中)*/
 struct ext2_inode_memory inodesTable_memory[128];/*定义全局inodeTable(内存中)*/
-int p_inodeTable = 0;   /*永远指向inodeTable末尾*/
+int p_inodeTable = 1;   /*永远指向inodeTable末尾,0处不填数据,为了保证和硬盘inodetable对齐*/
 char inodeMap_memory[16];/*定义全局inode位图，因为最多有128个inode，128=16*8 */
 char blockMap_memory[64];/*定义全局block位图，因为硬盘容量512块，一个位映射一个块，512=64*8 */
 /*函数列表*/
@@ -46,6 +46,8 @@ void loadFileSysFromDisk(void){
     loadInode_bit(file);
     //4.加载block位图
     loadBlock_bit(file);
+    
+    fclose(file);
 }
 /*
  加载superblock函数
@@ -72,7 +74,7 @@ void loadSuperBlock(FILE * file){
 void loadInodeTable(FILE * file){
     printf("开始加载inodeTable\n");
     //通过superBlock拿到inodeTable首地址:(以字节为单位)
-    uint32_t inodeTable_addr_disk = (superBlock_memory.s_imap_first_block+1)*superBlock_memory.s_log_block_size;
+    uint32_t inodeTable_addr_disk = (superBlock_memory.s_imap_first_block+1)*superBlock_memory.s_log_block_size+superBlock_memory.s_inode_size;
     //inodeSize 以字节为单位
     uint32_t inodeSize = superBlock_memory.s_inode_size;
     //已使用的inode数量

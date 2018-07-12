@@ -10,5 +10,10 @@
 #define checkInput_h
 
 #include <stdio.h>
+#include "structs_def_file.h"
+/*
+ 对输入命令做分类
+ */
 void checkInput(char * input);
+
 #endif /* checkInput_h */
