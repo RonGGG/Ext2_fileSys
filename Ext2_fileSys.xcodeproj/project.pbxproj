@@ -12,6 +12,7 @@
 		A7B683CE20F5F39D0017CED5 /* checkInput.c in Sources */ = {isa = PBXBuildFile; fileRef = A7B683CD20F5F39D0017CED5 /* checkInput.c */; };
 		A7B683D920F5F6E40017CED5 /* commands.c in Sources */ = {isa = PBXBuildFile; fileRef = A7B683D820F5F6E40017CED5 /* commands.c */; };
 		A7B683FE20F66EFF0017CED5 /* inode_operates.c in Sources */ = {isa = PBXBuildFile; fileRef = A7B683FD20F66EFF0017CED5 /* inode_operates.c */; };
+		A7B6840120F9ECD20017CED5 /* check_disk.c in Sources */ = {isa = PBXBuildFile; fileRef = A7B6840020F9ECD20017CED5 /* check_disk.c */; };
 		A7BAFB0220F358B1007D6491 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = A7BAFB0120F358B1007D6491 /* main.c */; };
 		A7BAFB0B20F3609F007D6491 /* initBlocks_disk.c in Sources */ = {isa = PBXBuildFile; fileRef = A7BAFB0A20F3609F007D6491 /* initBlocks_disk.c */; };
 		A7BAFB0E20F43849007D6491 /* loadFromDisk.c in Sources */ = {isa = PBXBuildFile; fileRef = A7BAFB0D20F43849007D6491 /* loadFromDisk.c */; };
@@ -40,6 +41,8 @@
 		A7B683D820F5F6E40017CED5 /* commands.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = commands.c; sourceTree = "<group>"; };
 		A7B683FC20F66EFF0017CED5 /* inode_operates.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = inode_operates.h; sourceTree = "<group>"; };
 		A7B683FD20F66EFF0017CED5 /* inode_operates.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = inode_operates.c; sourceTree = "<group>"; };
+		A7B683FF20F9ECD20017CED5 /* check_disk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = check_disk.h; sourceTree = "<group>"; };
+		A7B6840020F9ECD20017CED5 /* check_disk.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = check_disk.c; sourceTree = "<group>"; };
 		A7BAFAFE20F358B1007D6491 /* Ext2_fileSys */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Ext2_fileSys; sourceTree = BUILT_PRODUCTS_DIR; };
 		A7BAFB0120F358B1007D6491 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		A7BAFB0820F3592A007D6491 /* structs_def_file.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = structs_def_file.h; sourceTree = "<group>"; };
@@ -111,6 +114,8 @@
 				A7BAFB0120F358B1007D6491 /* main.c */,
 				A7B683FC20F66EFF0017CED5 /* inode_operates.h */,
 				A7B683FD20F66EFF0017CED5 /* inode_operates.c */,
+				A7B683FF20F9ECD20017CED5 /* check_disk.h */,
+				A7B6840020F9ECD20017CED5 /* check_disk.c */,
 			);
 			path = Ext2_fileSys;
 			sourceTree = "<group>";
@@ -172,6 +177,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A7BAFB0B20F3609F007D6491 /* initBlocks_disk.c in Sources */,
+				A7B6840120F9ECD20017CED5 /* check_disk.c in Sources */,
 				A7BAFB0E20F43849007D6491 /* loadFromDisk.c in Sources */,
 				A7B683FE20F66EFF0017CED5 /* inode_operates.c in Sources */,
 				A7B683C820F5A20D0017CED5 /* initUser.c in Sources */,

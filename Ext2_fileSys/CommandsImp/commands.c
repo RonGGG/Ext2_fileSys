@@ -95,14 +95,18 @@ void commands_ls(char * command){
         char * curStr = command+3;
         char ch[256];
         analyse_pathTo_inode(curStr, &open_inode,ch);
-        if ((open_inode->i_mode>>12)==Contents_File) {
-            if (verify_priority(currentUser,open_inode)==DISS_OP) {
-                printf("该用户权限不够\n");
-                return;
+        if (open_inode!=NULL) {
+            if ((open_inode->i_mode>>12)==Contents_File) {
+                if (verify_priority(currentUser,open_inode)==DISS_OP) {
+                    printf("该用户权限不够\n");
+                    return;
+                }
+                readfile_perpage(open_inode);
+            }else{
+                printf("不能执行此命令，该文件不是目录文件\n");
             }
-            readfile_perpage(open_inode);
         }else{
-            printf("不能执行此命令，该文件不是目录文件\n");
+            printf("没有该文件！\n");
         }
     }else{//无参数
         if ((currentTask->fs->pwd->i_mode>>12)==Contents_File) {//需判断当前目录是否是目录文件
@@ -121,20 +125,24 @@ void commands_cd(char * command){
         struct ext2_inode_memory * open_inode = NULL;
         char * curStr = command+3;
         analyse_pathTo_inode(curStr, &open_inode,currentPwd);//得到顶层文件
-        if (open_inode->i_number==currentUser->user_content->i_number) {
-            memset(currentPwd, '\0', 256);
-            currentTask->fs->pwd = currentUser->user_content;
-            return;
-        }
-        if ((open_inode->i_mode>>12)==Contents_File) {
-            if (verify_priority(currentUser,open_inode)==DISS_OP) {
-                printf("该用户权限不够\n");
+        if (open_inode!=NULL) {
+            if (open_inode->i_number==currentUser->user_content->i_number) {
+                memset(currentPwd, '\0', 256);
+                currentTask->fs->pwd = currentUser->user_content;
                 return;
             }
-            //修改fs中pwd路径
-            currentTask->fs->pwd = open_inode;
+            if ((open_inode->i_mode>>12)==Contents_File) {
+                if (verify_priority(currentUser,open_inode)==DISS_OP) {
+                    printf("该用户权限不够\n");
+                    return;
+                }
+                //修改fs中pwd路径
+                currentTask->fs->pwd = open_inode;
+            }else{
+                printf("不能执行此命令，该文件不是目录文件\n");
+            }
         }else{
-            printf("不能执行此命令，该文件不是目录文件\n");
+            printf("该文件不存在\n");
         }
     }else{
         //修改fs中pwd路径

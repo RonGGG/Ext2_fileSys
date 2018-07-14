@@ -572,7 +572,7 @@ void delete_dir(struct ext2_inode_memory * father_dir_inode){
     }
     //遍历
     uint32_t items_num = father_dir_inode->i_size/DIR_ENTRY_SIZE;//该目录项数
-    uint32_t blocks = father_dir_inode->i_blocks/BLOCK_SIZE;//块数
+    uint32_t blocks = father_dir_inode->i_blocks;//块数
     char buff[BLOCK_SIZE];
     for (int i=0; i<blocks; i++) {//遍历所有块
         memset(buff, '\0', BLOCK_SIZE);
@@ -589,6 +589,9 @@ void delete_dir(struct ext2_inode_memory * father_dir_inode){
             find_inode(dir.inode, &inode_del);//找到该inode号
             if (dir.file_type==Contents_File) {//目录项所表示的文件是目录文件
                 delete_dir(inode_del);//递归调用
+                //这里还得删除父目录中该文件的目录项
+                delete_in_father_dir(father_dir_inode);
+                delete_file(inode_del);//删除该文件
             }else{
                 //这里还得删除父目录中该文件的目录项
                 delete_in_father_dir(father_dir_inode);

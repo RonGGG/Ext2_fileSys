@@ -114,12 +114,6 @@ void analyse_pathTo_inode(char * path,struct ext2_inode_memory ** inode,char * r
 void find_inode(uint32_t inodeNum,struct ext2_inode_memory ** inode);
 
 
-///*
-// 通过inode号找到路径
-// 参数:char至少256B
-// */
-//void find_inode_pwd(uint32_t inodeNum,char * pwd);
-
 
 /*
  在当前目录中找name文件，找到将inode号存在ret_inode_num中

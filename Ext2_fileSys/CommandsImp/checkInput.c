@@ -9,6 +9,7 @@
 #include "checkInput.h"
 #include "commands.h"
 #include <string.h>
+#include <stdlib.h>
 
 extern struct task_struct * currentTask;/*当前进程*/
 void checkInput(char * input){
@@ -25,7 +26,11 @@ void checkInput(char * input){
         commands_rmdir(input);
     }else if (strncmp(input, "rm",2)==0){//删除文件（Ordinary类型文件）
         commands_rm(input);
-    }else{
+    }
+    else if(strncmp(input, "clear",5)==0){
+        system("clear");
+    }
+    else{
         printf("Has not this command!\n");
     }
 }
