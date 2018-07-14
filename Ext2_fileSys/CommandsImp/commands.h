@@ -16,12 +16,8 @@
  现在只能一级索引，高级索引没有写
  */
 void readfile_perpage(struct ext2_inode_memory * inode);
-/*
- 权限检验
- 参数：（操作用户，操作文件）
- 返回值：1可以操作 0不可以操作
- */
-int verify_priority(struct User * currentUsr,struct ext2_inode_memory * file_inode);
+
+
 void commands_ls(char * command);/*ls command*/
 void commands_cd(char * command);/*cd command*/
 void commands_mkdir(char * command);/*mkdir command*/

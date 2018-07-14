@@ -50,12 +50,14 @@ int main(int argc, const char * argv[]) {
     /*初始化用户*/
     initUser();//此处默认以Ron(普通用户)的身份登录
     //创建用户目录：
-    struct ext2_inode_memory inode;//inode即当前用户目录 /root/Ron/
-    gzr_creat("/", "Ron", 3, Contents_File<<12, &inode);
-    currentUser->user_content = &inode;//设定Ron用户目录
-    find_inode(1, &userList[1]->user_content);
+    struct ext2_inode_memory * inode;//inode即当前用户目录 /root/Ron/
+    currentUser = userList[1];
+    gzr_creat("/", "Ron", 3, Contents_File<<12, &inode);//这里需注意，Ron目录应该是root创建的，所以创建前需要切换用户
+    currentUser = userList[0];
+    currentUser->user_content = inode;//设定Ron用户目录
+    find_inode(1, &userList[1]->user_content);//设定root用户目录
     /*初始化终端进程*/
-    initTask(&inode);
+    initTask(inode);
     /*打印展示界面*/
     printf("==========================\n");
     printf("Block counts:%d\n",superBlock_memory.s_blocks_count);
@@ -68,6 +70,13 @@ int main(int argc, const char * argv[]) {
     
     char inputBuff[1024];   //用于接受用户输入
     while (1) {
+        /**************/
+//        extern struct ext2_inode_memory inodesTable_memory[];
+//        extern int p_inodeTable;
+//        extern char inodeMap_memory[];
+//        extern char blockMap_memory[];
+        
+        /**************/
         if (currentPwd[0]=='\0') {
             printf("Mymac:~ %s$ ",currentUser->name);
         }else{

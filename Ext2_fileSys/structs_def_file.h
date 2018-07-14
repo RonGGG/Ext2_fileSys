@@ -10,6 +10,9 @@
 #define structs_def_file_h
 
 #define BLOCK_SIZE 1024  //数据块大小常量
+#define INODE_TABLE_ADDR 1024*3  //inodeTable位置(硬盘)
+#define IMAP_ADDR 1024*2
+#define ZMAP_ADDR 1024
 
 #define EXT2_VALID_FS    0x0001 //文件系统没有出错
 #define EXT2_ERROR_FS   0x0002  //内核检测到错误
@@ -113,6 +116,7 @@ struct ext2_super_block_memory
 };
 #define Ext2_N_BLOCKS 9
 #define INODE_STRUCT_SIZE 128
+
 /*inode数据结构：(硬盘上)*/
 struct ext2_inode {
     uint16_t    i_mode; /* 文件类型和访问权限 高4位表示类型，低12位表示权限：0，1，2，3级别*/

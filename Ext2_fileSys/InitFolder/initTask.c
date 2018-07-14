@@ -19,7 +19,7 @@ struct file * file_table[NR_FILE_TABLE];/*系统打开文件数组*/
 struct ext2_inode_memory * getInodeByNum(uint32_t inode){
     extern struct ext2_inode_memory inodesTable_memory[];
     extern int p_inodeTable;
-    for (int i=0; i<p_inodeTable; i++) {
+    for (int i=1; i<=p_inodeTable; i++) {
         if (inodesTable_memory[i].i_number==inode) {
             return &inodesTable_memory[i];
         }
